@@ -1,4 +1,5 @@
 #include "HeartsGame.hpp"
+#include <wx/msgdlg.h>
 #include <iostream>
 #include <thread>
 #include <chrono>
@@ -201,26 +202,29 @@ void HeartsGame::dealCards(std::vector<Card>& Deck)
 	}
 }
 
-void HeartsGame::play(bool start)
+bool HeartsGame::play(bool start)
 {
 	if (start)
 		currentPlayerIndex = findTwoOfClubs();
 
 	for (int i = 0; i < 4; i++)
 	{
+		isRoundOver = false;
 		if (turn == 4)
 		{
 			endTurn();
 			if (players[i].getHand().size() == 0)
 			{
 				endRound();
+				isRoundOver = true;
 				if (round % 4 == 3)
 				{
 					isPassing = false;
 				}
 				turn = 0;
-				if (isGameOver) return;
-				if (isPassing) return;
+				
+				if (isGameOver) return false;
+				if (isPassing) return false;
 			}
 			turn = 0;
 			
@@ -228,12 +232,12 @@ void HeartsGame::play(bool start)
 			numTricks++;
 			centerPile.clear();
 			i = 0;
-			return;
+			return true;
 		}
 		bool valid = false;
 		do
 		{
-			if (players[(currentPlayerIndex) % players.size()].getId() == 0) return;
+			if (players[(currentPlayerIndex) % players.size()].getId() == 0) return true;
 			//for AI
 			valid = playCard(HeartsAI::getPlay(players[(currentPlayerIndex)].getHand()), 
 							players[(currentPlayerIndex)].getId());
@@ -241,6 +245,7 @@ void HeartsGame::play(bool start)
 		currentPlayerIndex = (currentPlayerIndex + 1) % 4;
 		turn++;
 	}
+	return true;
 }
 //begins the game of hearts
 //can be called multiple times to 
@@ -405,11 +410,24 @@ void HeartsGame::endRound()
 	for (int i = 0; i < players.size(); i++)
 	{
 		players[i].startNewRound();
-		if (players[i].getTotalScore() >= 100) gameOver();
+		if (players[i].getTotalScore() >= 100) gameOver(); //for testing set to 10
 	}
 	centerPile.clear();
 	turn = 0;
+  endRoundPopup();
 	play_Hearts();
+}
+
+void HeartsGame::endRoundPopup() {
+  //build message
+  std::string msg = "-- End of round --\n\n";
+	for (int i = 0; i < players.size(); i++)
+	{
+    msg += "\t" + players[i].getName() + " score: " 
+        + std::to_string(players[i].getRoundScore()) +
+        " (" + std::to_string(players[i].getTotalScore()) + ")\n"; 
+	}
+  wxMessageBox(msg);
 }
 
 //passes a card
@@ -446,6 +464,7 @@ Status HeartsGame::updateStatus()
 	}
 	tmp.isGameOver = isGameOver;
 	tmp.passing = isPassing;
+	tmp.isRoundOver = isRoundOver;
 	return tmp;
 }
 

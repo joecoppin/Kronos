@@ -18,6 +18,7 @@ public:
 	void passCards(int round);  
 	void endTurn();
 	void endRound();
+  void endRoundPopup();
 	int setPassCards(std::vector<Card> cards, std::string name);
 	int playCard(Card card, int id);
 	std::vector<Player> getPlayers() { return players; }
@@ -26,9 +27,10 @@ public:
 	void setPrivatePasscode(std::string passcode);
 	bool pass(int index);
 	Status updateStatus();
-	void play(bool start);
+	bool play(bool start);
 private:
 	bool isPassing = false;
+	bool isRoundOver = false;
 	std::vector<Card> initializeDeck();
 	void dealCards(std::vector<Card>& Deck);
 	int currentPlayerIndex;
