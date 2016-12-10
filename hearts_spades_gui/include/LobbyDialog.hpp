@@ -10,19 +10,15 @@
 class LobbyDialog : public wxDialog
 {
 public:	
-	LobbyDialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = "Game Lobby", const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE ); 
+	LobbyDialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = "Game Lobby", const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER ); 
 	CreateGameDialog m_createHeartsGameDialog;
 	CreateGameDialog m_createSpadesGameDialog;
-	void joinPrivateSpadesGame(wxCommandEvent& event);
-	void joinPrivateHeartsGame(wxCommandEvent& event);
-	void joinPublicSpadesGame(wxCommandEvent& event); 
-	void joinPublicHeartsGame(wxCommandEvent& event); 
+  wxButton* m_joinPrivateHeartsBtn;
+  wxButton* m_joinPublicHeartsBtn;
+  wxButton* m_joinPrivateSpadesBtn;
+  wxButton* m_joinPublicSpadesBtn;
 	void createNewSpadesGame(wxCommandEvent& event);
 	void createNewHeartsGame(wxCommandEvent& event);
-
-private:
-  wxTextCtrl* m_textCtrlUsername;
-  wxTextCtrl* m_textCtrlPassword;
 };
 
 #endif /* ifndef LOBBYDIALOG_HPP */
